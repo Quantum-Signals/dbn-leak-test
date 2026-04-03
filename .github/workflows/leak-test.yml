@@ -1,0 +1,24 @@
+name: dbn_leak_test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12.10"
+
+      - name: Install latest databento packages
+        run: pip install --upgrade databento databento-dbn
+
+      - name: Run leak test
+        env:
+          DATABENTO_API_KEY: ${{ secrets.DATABENTO_API_KEY }}
+        run: timeout 120 python dbn_leak_test.py || true
